@@ -1,0 +1,2423 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Forever Miles — personalized web pages for birthdays, weddings, proposals, anniversaries, graduations & more. Designed in 24 hours, shared with one link.">
+    <title>Forever Miles | Personalized Pages for Life's Best Moments</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=Manrope:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        /* ============================================
+           DESIGN TOKENS
+        ============================================ */
+        :root {
+            --bg: #0c0a10;
+            --bg-soft: #15121c;
+            --bg-soft-2: #1c1825;
+            --ink: #f6f1ec;
+            --ink-dim: #b6aebd;
+            --ink-faint: #7d7587;
+            --border: rgba(246, 241, 236, 0.09);
+            --border-strong: rgba(246, 241, 236, 0.18);
+            --surface: rgba(255, 255, 255, 0.035);
+            --surface-strong: rgba(255, 255, 255, 0.07);
+
+            --gold: #d9a868;
+            --gold-soft: rgba(217, 168, 104, 0.16);
+            --rose: #e8a0a0;
+            --grad-signature: linear-gradient(135deg, var(--gold) 0%, var(--rose) 100%);
+
+            --font-display: 'Fraunces', serif;
+            --font-body: 'Manrope', sans-serif;
+
+            --container: 1180px;
+            --radius-sm: 10px;
+            --radius-md: 18px;
+            --radius-lg: 28px;
+            --section-pad: clamp(4rem, 9vw, 7.5rem);
+
+            --ease: cubic-bezier(0.16, 1, 0.3, 1);
+            --t-fast: 0.25s;
+            --t-med: 0.5s;
+
+            --th-birthday-a: #ff8aa8;
+            --th-birthday-b: #ffd56b;
+            --th-wedding-a: #f7eedb;
+            --th-wedding-b: #d4af37;
+            --th-proposal-a: #c4203f;
+            --th-proposal-b: #f3b3b3;
+            --th-anniversary-a: #e7c79c;
+            --th-anniversary-b: #fbeed8;
+            --th-baby-a: #a9d8ec;
+            --th-baby-b: #ffc9da;
+            --th-graduation-a: #2f4d8f;
+            --th-graduation-b: #e4c674;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+
+        /* ============================================
+           RESET / BASE
+        ============================================ */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            background: var(--bg);
+            color: var(--ink);
+            font-family: var(--font-body);
+            font-size: 16px;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            z-index: -2;
+            background:
+                radial-gradient(circle at 18% 12%, rgba(217, 168, 104, 0.16), transparent 45%),
+                radial-gradient(circle at 85% 28%, rgba(232, 160, 160, 0.10), transparent 50%),
+                radial-gradient(circle at 50% 95%, rgba(140, 110, 190, 0.10), transparent 55%),
+                var(--bg);
+            pointer-events: none;
+        }
+
+        h1, h2, h3 {
+            font-family: var(--font-display);
+            font-weight: 600;
+            line-height: 1.15;
+            letter-spacing: -0.01em;
+            color: var(--ink);
+        }
+
+        a { color: inherit; text-decoration: none; }
+        img, video { max-width: 100%; display: block; }
+        ul { list-style: none; }
+        button { font-family: inherit; cursor: pointer; border: none; background: none; }
+
+        :focus-visible {
+            outline: 2px solid var(--gold);
+            outline-offset: 3px;
+            border-radius: 4px;
+        }
+
+        section {
+            padding: var(--section-pad) 1.5rem;
+            max-width: var(--container);
+            margin: 0 auto;
+        }
+
+        .eyebrow {
+            font-size: 0.8rem;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: var(--gold);
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: inline-block;
+        }
+
+        [data-reveal] {
+            opacity: 0;
+            transform: translateY(28px);
+            transition: opacity 0.9s var(--ease), transform 0.9s var(--ease);
+        }
+
+        [data-reveal].is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .btn-primary,
+        .btn-outline,
+        .btn-text {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: transform var(--t-fast) var(--ease), box-shadow var(--t-fast) var(--ease), border-color var(--t-fast) var(--ease), color var(--t-fast) var(--ease), background var(--t-fast) var(--ease);
+        }
+
+        .btn-primary {
+            padding: 0.9rem 2rem;
+            border-radius: 999px;
+            background: var(--grad-signature);
+            color: #1a1216;
+            box-shadow: 0 5px 22px 1px rgba(217, 168, 104, 0.5);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px) scale(1.03);
+            box-shadow: 0 5px 22px 2px rgba(217, 168, 104, 0.65);
+        }
+
+        .btn-outline {
+            padding: 0.95rem 2.1rem;
+            border-radius: 999px;
+            border: 1px solid var(--border-strong);
+            color: var(--ink);
+            background: var(--surface);
+            backdrop-filter: blur(6px);
+        }
+
+        .btn-outline:hover {
+            border-color: var(--gold);
+            color: var(--gold);
+            transform: translateY(-2px);
+        }
+
+        .btn-text {
+            color: var(--ink-dim);
+            font-weight: 500;
+            position: relative;
+        }
+
+        .btn-text::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -4px;
+            width: 0%;
+            height: 1px;
+            background: var(--gold);
+            transition: width var(--t-fast) var(--ease);
+        }
+
+        .btn-text:hover { color: var(--gold); }
+        .btn-text:hover::after { width: 100%; }
+
+        /* ============================================
+           NAVBAR
+        ============================================ */
+        .navbar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.1rem 2rem;
+            background: rgba(12, 10, 16, 0.45);
+            backdrop-filter: blur(20px) saturate(160%);
+            border-bottom: 1px solid var(--border);
+            transition:
+                background 0.5s var(--ease),
+                border-color 0.5s var(--ease),
+                box-shadow 0.5s var(--ease),
+                padding 0.4s var(--ease);
+        }
+
+        .navbar.scrolled {
+            background: rgba(12, 10, 16, 0.86);
+            border-bottom-color: rgba(217, 168, 104, 0.2);
+            box-shadow: 0 12px 40px -14px rgba(0, 0, 0, 0.65);
+            padding-top: 0.78rem;
+            padding-bottom: 0.78rem;
+        }
+
+        .brand {
+            font-family: var(--font-display);
+            font-size: 1.35rem;
+            font-weight: 600;
+            letter-spacing: 0.01em;
+            transition: opacity 0.25s var(--ease);
+        }
+        .brand:hover { opacity: 0.85; }
+
+        .brand-span {
+            background: var(--grad-signature);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: transparent;
+        }
+
+        .hamburger {
+            display: none;
+            width: 38px;
+            height: 38px;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.35rem;
+            color: var(--ink-dim);
+            border-radius: 10px;
+            border: 1px solid transparent;
+            background: transparent;
+            transition:
+                color 0.25s var(--ease),
+                background 0.25s var(--ease),
+                border-color 0.25s var(--ease),
+                transform 0.35s var(--ease);
+        }
+
+        .hamburger:hover {
+            color: var(--gold);
+            background: var(--gold-soft);
+            border-color: rgba(217, 168, 104, 0.3);
+        }
+
+        .hamburger.is-open {
+            color: var(--gold);
+            background: var(--gold-soft);
+            border-color: rgba(217, 168, 104, 0.3);
+            transform: rotate(90deg);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 0.4rem;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        .nav-links a {
+            color: var(--ink-dim);
+            position: relative;
+            padding: 0.4rem 0.7rem;
+            border-radius: 8px;
+            transition: color 0.25s var(--ease), background 0.25s var(--ease);
+        }
+
+        .nav-links a:hover {
+            color: var(--ink);
+            background: rgba(246, 241, 236, 0.06);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            bottom: -2px;
+            width: calc(100% - 1.4rem);
+            height: 1px;
+            background: var(--grad-signature);
+            transform: translateX(-50%) scaleX(0);
+            transform-origin: center;
+            transition: transform 0.3s var(--ease);
+            border-radius: 1px;
+        }
+
+        .nav-links a:hover::after { transform: translateX(-50%) scaleX(1); }
+
+        /* ============================================
+           HERO
+        ============================================ */
+        .hero {
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 2.5rem;
+            align-items: center;
+            padding-top: clamp(4rem, 9vw, 7rem);
+            padding-bottom: clamp(4rem, 9vw, 7rem);
+            max-width: var(--container);
+            margin: 0 auto;
+            padding-left: 1.5rem;
+            padding-right: 1.5rem;
+        }
+
+        .hero-p {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.55rem;
+            font-size: clamp(0.66rem, 1.5vw, 0.75rem);
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            color: var(--gold);
+            font-weight: 700;
+            margin-bottom: 1.8rem;
+            padding: 0.45rem 1.1rem 0.45rem 0.75rem;
+            border-radius: 999px;
+            border: 1px solid rgba(217, 168, 104, 0.38);
+            background: rgba(217, 168, 104, 0.07);
+            backdrop-filter: blur(8px);
+            width: fit-content;
+        }
+
+        .hero-p .badge-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--gold);
+            flex-shrink: 0;
+        }
+
+        .hero-main h1 {
+            font-size: clamp(2.3rem, 5vw, 4.3rem);
+            font-weight: 600;
+            line-height: 1.1;
+            margin-bottom: 1.4rem;
+            background: linear-gradient(170deg, var(--ink) 10%, rgba(246, 241, 236, 0.65) 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: transparent;
+        }
+
+        .hero-p1 {
+            color: var(--ink-dim);
+            font-size: clamp(0.92rem, 1.8vw, 1.05rem);
+            margin-bottom: 2.2rem;
+        }
+
+        .hero-main>p { line-height: 1.78; }
+
+        .hero-cta-row {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem 1.8rem;
+        }
+
+        #orderNowBtn { gap: 0.5rem; }
+
+        #orderNowBtn .btn-arrow {
+            display: inline-block;
+            transition: transform 0.3s var(--ease);
+        }
+
+        #orderNowBtn:hover .btn-arrow { transform: translateX(5px); }
+
+        .btn-text .arrow-wrap {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            border: 1px solid var(--border-strong);
+            font-size: 0.8em;
+            flex-shrink: 0;
+            transition: border-color 0.25s var(--ease), background 0.25s var(--ease), transform 0.3s var(--ease);
+        }
+
+        .btn-text:hover .arrow-wrap {
+            border-color: var(--gold);
+            background: var(--gold-soft);
+            transform: translateY(3px);
+        }
+
+        .hero-main-cards {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 2.5rem;
+        }
+
+        .hero-main-cards>div {
+            flex: 1;
+            padding: 0.95rem 0.6rem;
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            background: var(--surface);
+            backdrop-filter: blur(10px);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: border-color 0.3s var(--ease), box-shadow 0.3s var(--ease);
+        }
+
+        .hero-main-cards>div::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: var(--grad-signature);
+            opacity: 0;
+            transition: opacity 0.3s var(--ease);
+            pointer-events: none;
+        }
+
+        .hero-main-cards>div:hover {
+            border-color: rgba(217, 168, 104, 0.38);
+            box-shadow: 0 6px 22px -10px rgba(217, 168, 104, 0.28);
+        }
+
+        .hero-main-cards>div:hover::after { opacity: 0.05; }
+
+        .hero-main-cards>div h2 {
+            font-size: clamp(1.4rem, 2.8vw, 1.9rem);
+            background: var(--grad-signature);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: transparent;
+            margin-bottom: 0.15rem;
+            line-height: 1.2;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-main-cards>div p {
+            font-size: 0.7rem;
+            color: var(--ink-faint);
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-cards1 {
+            position: relative;
+            height: 500px;
+            overflow: visible;
+        }
+
+        /* base glass card */
+        .hero-cards {
+            position: absolute;
+            width: 228px;
+            padding: 1.45rem 1.35rem;
+            border-radius: 20px;
+            backdrop-filter: blur(22px) saturate(180%);
+            will-change: transform;
+        }
+
+        .section-1-p {
+            font-size: 1.75rem;
+            margin-bottom: 0.65rem;
+            display: block;
+            line-height: 1;
+        }
+
+        .section-1-h3 {
+            font-size: 1.1rem;
+            font-family: var(--font-display);
+            font-weight: 500;
+            margin-bottom: 0.4rem;
+            line-height: 1.3;
+        }
+
+        .section-1-h3 em { font-style: normal; color: var(--rose); }
+
+        .section-1-p1 {
+            color: var(--ink-faint);
+            font-size: 0.79rem;
+            margin-bottom: 0.85rem;
+        }
+
+        .hero-cards .section-p,
+        .hero-cards p:last-child {
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+        }
+
+        /* card 1 — proposal (rose) — top-right */
+        .hero-cards.section-1 {
+            top: 10px;
+            right: 0;
+            z-index: 3;
+            border: 1px solid rgba(232, 160, 160, 0.32);
+            background: linear-gradient(148deg, rgba(232, 160, 160, 0.12) 0%, rgba(14, 10, 20, 0.78) 65%);
+            box-shadow:
+                0 22px 52px -18px rgba(0, 0, 0, 0.62),
+                0 0 60px -6px rgba(232, 160, 160, 0.18),
+                inset 0 1px 0 rgba(255, 255, 255, 0.09);
+        }
+
+        .hero-cards.section-1 .section-p { color: var(--rose); }
+
+        /* card 2 — birthday (gold) — middle-left */
+        .hero-cards.section-2 {
+            top: 170px;
+            left: 0;
+            z-index: 2;
+            border: 1px solid rgba(217, 168, 104, 0.3);
+            background: linear-gradient(148deg, rgba(217, 168, 104, 0.11) 0%, rgba(14, 10, 20, 0.78) 65%);
+            box-shadow:
+                0 22px 52px -18px rgba(0, 0, 0, 0.62),
+                0 0 60px -6px rgba(217, 168, 104, 0.16),
+                inset 0 1px 0 rgba(255, 255, 255, 0.09);
+        }
+
+        .hero-cards.section-2 p:last-child { color: var(--gold); }
+
+        /* card 3 — wedding (ivory-gold) — bottom-right */
+        .hero-cards.section-3 {
+            bottom: 10px;
+            right: 16px;
+            z-index: 1;
+            border: 1px solid rgba(212, 175, 55, 0.28);
+            background: linear-gradient(148deg, rgba(212, 175, 55, 0.09) 0%, rgba(14, 10, 20, 0.78) 65%);
+            box-shadow:
+                0 22px 52px -18px rgba(0, 0, 0, 0.62),
+                0 0 60px -6px rgba(212, 175, 55, 0.13),
+                inset 0 1px 0 rgba(255, 255, 255, 0.09);
+        }
+
+        .hero-cards.section-3 p:last-child { color: var(--th-wedding-b); }
+
+        /* ── Keyframes ── */
+        @keyframes hero-in {
+            from { opacity: 0; transform: translateY(22px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes card-in-1 {
+            from { opacity: 0; transform: translateY(34px) scale(0.94) rotate(-1.5deg); }
+            to   { opacity: 1; transform: translateY(0) scale(1) rotate(-1.5deg); }
+        }
+
+        @keyframes card-in-2 {
+            from { opacity: 0; transform: translateY(34px) scale(0.94) rotate(2deg); }
+            to   { opacity: 1; transform: translateY(0) scale(1) rotate(2deg); }
+        }
+
+        @keyframes card-in-3 {
+            from { opacity: 0; transform: translateY(34px) scale(0.94) rotate(-1.1deg); }
+            to   { opacity: 1; transform: translateY(0) scale(1) rotate(-1.1deg); }
+        }
+
+        @keyframes float-a {
+            0%, 100% { transform: scale(1) translateY(0) rotate(-1.5deg); }
+            50%       { transform: scale(1) translateY(-18px) rotate(-0.5deg); }
+        }
+
+        @keyframes float-b {
+            0%, 100% { transform: scale(1) translateY(0) rotate(2deg); }
+            50%       { transform: scale(1) translateY(16px) rotate(3deg); }
+        }
+
+        @keyframes float-c {
+            0%, 100% { transform: scale(1) translateY(0) rotate(-1deg); }
+            50%       { transform: scale(1) translateY(-13px) rotate(0deg); }
+        }
+
+        @keyframes float-mobile {
+            0%, 100% { transform: translateY(0); }
+            50%       { transform: translateY(-8px); }
+        }
+
+        @keyframes badge-glow {
+            0%, 100% { border-color: rgba(217, 168, 104, 0.3); box-shadow: 0 0 0 0 rgba(217, 168, 104, 0); }
+            50%       { border-color: rgba(217, 168, 104, 0.72); box-shadow: 0 0 22px 0 rgba(217, 168, 104, 0.13); }
+        }
+
+        @keyframes dot-pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50%       { opacity: 0.3; transform: scale(0.5); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50%       { transform: scale(1.04); }
+        }
+
+        @keyframes arrow-bob {
+            0%, 100% { transform: translateY(0); }
+            50%       { transform: translateY(3px); }
+        }
+
+        @keyframes process-sweep {
+            from { transform: scaleX(0); }
+            to   { transform: scaleX(1); }
+        }
+
+        /* ── Animations — respects prefers-reduced-motion ── */
+        @media (prefers-reduced-motion: no-preference) {
+            .hero-p {
+                animation: hero-in 0.7s var(--ease) both, badge-glow 4s ease-in-out 1s infinite;
+            }
+
+            .hero-p .badge-dot { animation: dot-pulse 2.6s ease-in-out 1s infinite; }
+
+            .hero-main h1  { animation: hero-in 0.8s var(--ease) 0.18s both; }
+            .hero-main>p   { animation: hero-in 0.8s var(--ease) 0.32s both; }
+            .hero-cta-row  { animation: hero-in 0.8s var(--ease) 0.46s both; }
+            .hero-main-cards { animation: hero-in 0.8s var(--ease) 0.62s both; }
+
+            .hero-cards.section-1 {
+                animation: card-in-1 0.85s var(--ease) 0.7s both, float-a 10s ease-in-out 1.55s infinite;
+            }
+            .hero-cards.section-2 {
+                animation: card-in-2 0.85s var(--ease) 1.0s both, float-b 12s ease-in-out 1.85s infinite;
+            }
+            .hero-cards.section-3 {
+                animation: card-in-3 0.85s var(--ease) 1.3s both, float-c 11s ease-in-out 2.15s infinite;
+            }
+
+            #orderNowBtn { animation: pulse 3s ease infinite; }
+            .btn-text    { animation: arrow-bob 2.6s ease-in-out 2.8s infinite; }
+            .arr         { animation: arrow-bob 2.2s ease-in-out 2.8s infinite; }
+        }
+
+        #orderNowBtn:hover { animation: none; }
+
+        /* ============================================
+           ABOUT / OCCASION CARDS
+        ============================================ */
+        .about-info {
+            text-align: center;
+            max-width: 42rem;
+            margin: 0 auto 4rem;
+        }
+
+        .about-info h2 {
+            font-size: clamp(2.1rem, 4.5vw, 3rem);
+            margin-bottom: 0.9rem;
+            line-height: 1.15;
+        }
+
+        .about-info h2 span { color: var(--gold); }
+        .about-info>p:last-child { color: var(--ink-dim); }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.4rem;
+        }
+
+        .card {
+            position: relative;
+            padding: 2.2rem 1.8rem 2rem;
+            border-radius: var(--radius-md);
+            background: rgba(255, 255, 255, 0.025);
+            border: 1px solid var(--border);
+            backdrop-filter: blur(16px);
+            overflow: hidden;
+            isolation: isolate;
+            transition:
+                transform 0.5s var(--ease),
+                border-color 0.5s var(--ease),
+                box-shadow 0.5s var(--ease),
+                background 0.5s var(--ease);
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            opacity: 0;
+            transition: opacity 0.5s var(--ease);
+            pointer-events: none;
+        }
+
+        .card::after {
+            content: '';
+            position: absolute;
+            top: -10%;
+            left: -90%;
+            width: 48%;
+            height: 120%;
+            background: linear-gradient(108deg, transparent 20%, rgba(255, 255, 255, 0.065) 50%, transparent 80%);
+            transform: skewX(-12deg);
+            pointer-events: none;
+            z-index: 3;
+            transition: left 0.72s var(--ease);
+        }
+
+        .card:hover::after,
+        .card.theme-active::after { left: 145%; }
+
+        .card h3, .card a { position: relative; z-index: 1; }
+        .card>p:not(.card-icon):not(.card-tag) { position: relative; z-index: 1; }
+
+        .card:hover,
+        .card.theme-active { transform: translateY(-10px) scale(1.016); }
+
+        .card:hover::before,
+        .card.theme-active::before { opacity: 1; }
+
+        .card[data-theme="birthday"]::before {
+            background: linear-gradient(148deg, rgba(255, 120, 155, 0.18) 0%, rgba(255, 205, 80, 0.1) 55%, transparent 100%);
+        }
+        .card[data-theme="birthday"]:hover,
+        .card[data-theme="birthday"].theme-active {
+            border-color: rgba(255, 120, 155, 0.65);
+            background: rgba(255, 120, 155, 0.04);
+            box-shadow: 0 24px 56px -14px rgba(255, 100, 140, 0.42), inset 0 0 0 1px rgba(255, 120, 155, 0.12);
+        }
+
+        .card[data-theme="wedding"]::before {
+            background: linear-gradient(148deg, rgba(212, 175, 55, 0.17) 0%, rgba(247, 235, 200, 0.09) 55%, transparent 100%);
+        }
+        .card[data-theme="wedding"]:hover,
+        .card[data-theme="wedding"].theme-active {
+            border-color: rgba(212, 175, 55, 0.65);
+            background: rgba(212, 175, 55, 0.04);
+            box-shadow: 0 24px 56px -14px rgba(212, 175, 55, 0.42), inset 0 0 0 1px rgba(212, 175, 55, 0.12);
+        }
+
+        .card[data-theme="proposal"]::before {
+            background: linear-gradient(148deg, rgba(210, 30, 60, 0.2) 0%, rgba(240, 160, 170, 0.1) 55%, transparent 100%);
+        }
+        .card[data-theme="proposal"]:hover,
+        .card[data-theme="proposal"].theme-active {
+            border-color: rgba(220, 55, 85, 0.65);
+            background: rgba(210, 30, 60, 0.04);
+            box-shadow: 0 24px 56px -14px rgba(196, 32, 63, 0.48), inset 0 0 0 1px rgba(220, 55, 85, 0.12);
+        }
+
+        .card[data-theme="anniversary"]::before {
+            background: linear-gradient(148deg, rgba(231, 199, 156, 0.18) 0%, rgba(251, 235, 210, 0.09) 55%, transparent 100%);
+        }
+        .card[data-theme="anniversary"]:hover,
+        .card[data-theme="anniversary"].theme-active {
+            border-color: rgba(231, 199, 156, 0.65);
+            background: rgba(231, 199, 156, 0.04);
+            box-shadow: 0 24px 56px -14px rgba(215, 180, 110, 0.42), inset 0 0 0 1px rgba(231, 199, 156, 0.12);
+        }
+
+        .card[data-theme="baby"]::before {
+            background: linear-gradient(148deg, rgba(160, 215, 240, 0.18) 0%, rgba(255, 195, 215, 0.1) 55%, transparent 100%);
+        }
+        .card[data-theme="baby"]:hover,
+        .card[data-theme="baby"].theme-active {
+            border-color: rgba(160, 215, 240, 0.65);
+            background: rgba(160, 215, 240, 0.04);
+            box-shadow: 0 24px 56px -14px rgba(100, 185, 225, 0.44), inset 0 0 0 1px rgba(160, 215, 240, 0.12);
+        }
+
+        .card[data-theme="graduation"]::before {
+            background: linear-gradient(148deg, rgba(47, 77, 143, 0.24) 0%, rgba(228, 198, 116, 0.11) 55%, transparent 100%);
+        }
+        .card[data-theme="graduation"]:hover,
+        .card[data-theme="graduation"].theme-active {
+            border-color: rgba(228, 198, 116, 0.65);
+            background: rgba(47, 77, 143, 0.05);
+            box-shadow: 0 24px 56px -14px rgba(35, 60, 130, 0.52), inset 0 0 0 1px rgba(228, 198, 116, 0.14);
+        }
+
+        .card-icon {
+            font-size: 2.4rem;
+            margin-bottom: 1.1rem;
+            display: block;
+            position: relative;
+            z-index: 1;
+            transition: transform 0.5s var(--ease), opacity 0.4s var(--ease), filter 0.5s var(--ease);
+        }
+
+        .card:hover .card-icon,
+        .card.theme-active .card-icon {
+            animation: none;
+            opacity: 1;
+            transform: scale(1.22) rotate(-6deg);
+            filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.32));
+        }
+
+        @keyframes icon-idle {
+            0%, 100% { opacity: 1; }
+            50%       { opacity: 0.78; }
+        }
+
+        @media (prefers-reduced-motion: no-preference) {
+            .card .card-icon { animation: icon-idle 4.5s ease-in-out infinite; }
+            .cards .card:nth-child(1) .card-icon { animation-delay: 0s; }
+            .cards .card:nth-child(2) .card-icon { animation-delay: 0.75s; }
+            .cards .card:nth-child(3) .card-icon { animation-delay: 1.5s; }
+            .cards .card:nth-child(4) .card-icon { animation-delay: 0.38s; }
+            .cards .card:nth-child(5) .card-icon { animation-delay: 1.12s; }
+            .cards .card:nth-child(6) .card-icon { animation-delay: 1.88s; }
+        }
+
+        .card h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.6rem;
+            transition: color 0.35s var(--ease);
+        }
+
+        .card>p:not(.card-icon):not(.card-tag) {
+            color: var(--ink-dim);
+            font-size: 0.9rem;
+            margin-bottom: 1.4rem;
+            line-height: 1.65;
+            position: relative;
+            z-index: 1;
+        }
+
+        .card a {
+            display: inline-flex;
+            align-items: center;
+            font-weight: 600;
+            font-size: 0.87rem;
+            color: var(--gold);
+            letter-spacing: 0;
+            transition: letter-spacing 0.35s var(--ease), opacity 0.25s var(--ease);
+        }
+
+        .card:hover a { letter-spacing: 0.03em; }
+
+        .card-tag {
+            position: absolute;
+            top: 1.1rem;
+            right: 1.1rem;
+            font-size: 0.65rem;
+            font-weight: 800;
+            letter-spacing: 0.07em;
+            text-transform: uppercase;
+            padding: 0.28rem 0.75rem;
+            border-radius: 999px;
+            z-index: 3;
+            transition: transform 0.35s var(--ease), box-shadow 0.35s var(--ease);
+        }
+
+        .card:hover .card-tag { transform: scale(1.07); }
+
+        .card[data-theme="birthday"] .card-tag {
+            background: linear-gradient(115deg, rgba(255, 115, 55, 0.24), rgba(255, 195, 45, 0.2));
+            color: #ffb340;
+            border: 1px solid rgba(255, 175, 48, 0.52);
+            box-shadow: 0 2px 16px -4px rgba(255, 150, 35, 0.36), inset 0 1px 0 rgba(255, 255, 200, 0.1);
+        }
+        .card[data-theme="birthday"] .card-tag::before { content: '⭐ '; font-size: 0.75em; letter-spacing: 0; }
+
+        .card[data-theme="proposal"] .card-tag {
+            background: linear-gradient(115deg, rgba(210, 28, 58, 0.26), rgba(255, 115, 140, 0.18));
+            color: #ff7a8a;
+            border: 1px solid rgba(220, 48, 78, 0.5);
+            box-shadow: 0 2px 16px -4px rgba(196, 32, 63, 0.34), inset 0 1px 0 rgba(255, 200, 210, 0.08);
+        }
+        .card[data-theme="proposal"] .card-tag::before { content: '♥ '; font-size: 0.9em; letter-spacing: 0; }
+
+        .card[data-theme="wedding"] .card-tag {
+            background: linear-gradient(115deg, rgba(212, 175, 55, 0.24), rgba(247, 235, 200, 0.18));
+            color: var(--th-wedding-b);
+            border: 1px solid rgba(212, 175, 55, 0.5);
+            box-shadow: 0 2px 16px -4px rgba(212, 175, 55, 0.3), inset 0 1px 0 rgba(255, 250, 225, 0.1);
+        }
+
+        .card[data-theme="anniversary"] .card-tag {
+            background: linear-gradient(115deg, rgba(231, 199, 156, 0.24), rgba(251, 235, 210, 0.18));
+            color: var(--th-anniversary-a);
+            border: 1px solid rgba(231, 199, 156, 0.5);
+            box-shadow: 0 2px 16px -4px rgba(215, 180, 110, 0.3), inset 0 1px 0 rgba(255, 248, 235, 0.1);
+        }
+
+        .card[data-theme="baby"] .card-tag {
+            background: linear-gradient(115deg, rgba(160, 215, 240, 0.24), rgba(255, 195, 215, 0.18));
+            color: var(--th-baby-a);
+            border: 1px solid rgba(160, 215, 240, 0.5);
+            box-shadow: 0 2px 16px -4px rgba(100, 185, 225, 0.3), inset 0 1px 0 rgba(235, 250, 255, 0.1);
+        }
+
+        .card[data-theme="graduation"] .card-tag {
+            background: linear-gradient(115deg, rgba(47, 77, 143, 0.28), rgba(228, 198, 116, 0.2));
+            color: var(--th-graduation-b);
+            border: 1px solid rgba(228, 198, 116, 0.5);
+            box-shadow: 0 2px 16px -4px rgba(35, 60, 130, 0.34), inset 0 1px 0 rgba(255, 248, 225, 0.08);
+        }
+
+        /* ============================================
+           PROCESS
+        ============================================ */
+        .process {
+            text-align: center;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            column-gap: 2rem;
+            row-gap: 1rem;
+        }
+
+        .process>p:first-child,
+        .process>h2,
+        .process>p:nth-of-type(2) {
+            grid-column: 1 / -1;
+        }
+
+        .process>h2 {
+            font-size: clamp(2.1rem, 4.5vw, 3rem);
+            margin-bottom: 0.5rem;
+        }
+
+        .process>p:nth-of-type(2) {
+            color: var(--ink-dim);
+            margin-bottom: 2.5rem;
+        }
+
+        .process-card {
+            position: relative;
+            padding: 2.4rem 1.6rem 1.8rem;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border);
+            background: var(--surface);
+            text-align: left;
+            overflow: hidden;
+            transition:
+                border-color var(--t-med) var(--ease),
+                transform var(--t-med) var(--ease),
+                box-shadow var(--t-med) var(--ease),
+                background var(--t-med) var(--ease);
+        }
+
+        .process-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--grad-signature);
+            border-radius: var(--radius-md) var(--radius-md) 0 0;
+            transform: scaleX(0);
+            transform-origin: left center;
+            transition: transform 0.45s var(--ease);
+        }
+
+        .process-card:hover::after { transform: scaleX(1); }
+
+        .process-card::before {
+            content: '';
+            position: absolute;
+            right: -1.15rem;
+            top: 3rem;
+            width: 0;
+            height: 0;
+            border-top: 7px solid transparent;
+            border-bottom: 7px solid transparent;
+            border-left: 9px solid rgba(217, 168, 104, 0.4);
+            z-index: 5;
+            transition: border-left-color var(--t-med) var(--ease), opacity var(--t-med) var(--ease);
+        }
+
+        .process-card:last-of-type::before { display: none; }
+
+        .process-card:hover {
+            border-color: rgba(217, 168, 104, 0.42);
+            transform: translateY(-6px);
+            box-shadow: 0 22px 50px -14px rgba(217, 168, 104, 0.22);
+            background: rgba(255, 255, 255, 0.055);
+        }
+
+        .process-card:hover::before {
+            border-left-color: rgba(217, 168, 104, 0.75);
+        }
+
+        .step-num {
+            display: inline-block;
+            font-family: var(--font-display);
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 0.15em;
+            color: var(--gold);
+            border: 1px solid rgba(217, 168, 104, 0.35);
+            border-radius: 999px;
+            padding: 0.3rem 0.85rem;
+            margin-bottom: 1.1rem;
+            transition: background var(--t-fast) var(--ease), border-color var(--t-fast) var(--ease);
+        }
+
+        .process-card:hover .step-num {
+            background: var(--gold-soft);
+            border-color: rgba(217, 168, 104, 0.6);
+        }
+
+        .process-card h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.6rem;
+        }
+
+        .process-card p {
+            color: var(--ink-dim);
+            font-size: 0.92rem;
+        }
+
+        .privacy-note {
+            grid-column: 1 / -1;
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--ink-faint);
+            margin-top: 1rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border);
+        }
+
+        /* ============================================
+           PRICING
+        ============================================ */
+        .pricing-head {
+            text-align: center;
+            max-width: 36rem;
+            margin: 0 auto 3.5rem;
+        }
+
+        .pricing-head h2 {
+            font-size: clamp(2.1rem, 4.5vw, 3rem);
+            margin-bottom: 0.6rem;
+        }
+
+        .pricing-head>p:last-child { color: var(--ink-dim); }
+
+         .fg{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1.75rem}
+.fc{border-radius:14px;padding:2.8rem 1.8rem 2.8rem;position:relative;overflow:hidden;cursor:pointer;border:1px solid rgba(246,241,236,0.09);background:rgba(255,255,255,0.03);display:flex;flex-direction:column;transition:opacity .35s ease,transform .35s ease,border-color .35s ease,background .35s ease,box-shadow .35s ease}
+.bar{position:absolute;top:0;left:0;right:0;height:2px;border-radius:14px 14px 0 0;transition:opacity .35s ease}
+.fstep{font-size:11px;font-weight:500;letter-spacing:.18em;margin-bottom:5px;opacity:.55}
+.fn{font-size:1.15rem;font-weight:500;color:#f6f1ec;margin-bottom:2px}
+.ft{font-size:.78rem;margin-bottom:8px;opacity:.85}
+.fprice{font-size:1.9rem;font-weight:500;color:#f6f1ec;line-height:1}
+.fstr{font-size:.85rem;color:#7d7587;text-decoration:line-through;margin-right:4px}
+.fdis{font-size:.72rem;font-weight:500;color:#e8a0a0;margin-bottom:3px;margin-top:2px}
+.fsave{font-size:.68rem;font-weight:500;color:#9a93a3;margin-bottom:7px}
+.fdiv{height:1px;background:rgba(246,241,236,0.08);margin:8px 0}
+.fl{padding:0;margin:0 0 .875rem;list-style:none;display:flex;flex-direction:column;gap:4px;flex-grow:1}
+.fl li{font-size:.82rem;color:#b6aebd;padding-left:1.25rem;position:relative;line-height:1.4}
+.fl li i{position:absolute;left:0;top:.08em;font-size:11px}
+.fpill{display:inline-block;font-size:.68rem;font-weight:500;padding:.2rem .65rem;border-radius:999px;margin-bottom:8px}
+.fnote{font-size:12px;color:var(--ink-dim);text-align:center;margin-top:8px}
+.fsocial{font-size:.68rem;color:#7d7587;display:flex;align-items:center;gap:5px;margin-top:8px;padding-top:8px;border-top:1px dashed rgba(246,241,236,.08)}
+.fsocial i{font-size:11px;opacity:.7}
+
+/* buttons */
+.fbtn{width:100%;padding:.65rem .875rem;border-radius:999px;border:1px solid rgba(246,241,236,0.12);background:rgba(255,255,255,0.04);color:#b6aebd;font-size:.82rem;font-weight:500;cursor:pointer;font-family:inherit;margin-top:auto;transition:transform .15s ease,filter .2s ease,background .2s ease,border-color .2s ease,color .2s ease}
+.fbtn:hover{filter:brightness(0.82) saturate(1.15)}
+.fbtn:active{transform:scale(.97);filter:brightness(0.72)}
+
+.fbtn-blue{border-color:rgba(160,184,232,.3)!important;color:#a0b8e8!important}
+.fbtn-blue:hover{background:rgba(160,184,232,.16)!important;border-color:rgba(160,184,232,.55)!important;color:#dce6fa!important;filter:none}
+.fbtn-blue:active{background:rgba(160,184,232,.22)!important}
+
+.fbtn-rose{border-color:rgba(232,160,160,.3)!important;color:#e8a0a0!important}
+.fbtn-rose:hover{background:rgba(232,160,160,.16)!important;border-color:rgba(232,160,160,.55)!important;color:#fadcdc!important;filter:none}
+.fbtn-rose:active{background:rgba(232,160,160,.22)!important}
+
+.fbtn-gold:hover{filter:brightness(1.2) saturate(1.1) }
+.fbtn-gold:active{filter:brightness(0.7)}
+
+        /* ============================================
+           SKILLS
+        ============================================ */
+        .skills-head {
+            grid-column: 1 / -1;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .skills-head h2 { font-size: clamp(2.1rem, 4.5vw, 3rem); }
+
+        .skills-head h2 span {
+            background: var(--grad-signature);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: transparent;
+        }
+
+        .skills {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+        }
+
+        .skills-card {
+            padding: 2rem 1.6rem;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border);
+            background: var(--surface);
+            text-align: center;
+            transition:
+                border-color var(--t-med) var(--ease),
+                transform var(--t-med) var(--ease),
+                box-shadow var(--t-med) var(--ease),
+                background var(--t-med) var(--ease);
+        }
+
+        .skills-card:hover {
+            border-color: rgba(217, 168, 104, 0.42);
+            transform: translateY(-6px);
+            box-shadow: 0 22px 50px -14px rgba(217, 168, 104, 0.22);
+            background: rgba(255, 255, 255, 0.055);
+        }
+
+        .skills-card>p:first-child {
+            font-size: 2.2rem;
+            margin-bottom: 1rem;
+            transition: transform 0.4s var(--ease);
+        }
+
+        .skills-card:hover>p:first-child {
+            transform: scale(1.15) rotate(-5deg);
+        }
+
+        .skills-card h3 {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .skills-card p:last-child {
+            color: var(--ink-dim);
+            font-size: 0.88rem;
+        }
+
+        /* ============================================
+           CONTACT / FORM
+        ============================================ */
+        .contact-head {
+            text-align: center;
+            max-width: 38rem;
+            margin: 0 auto 2.5rem;
+        }
+
+        .contact-head h2 {
+            font-size: clamp(2.1rem, 4.5vw, 3rem);
+            margin-bottom: 0.8rem;
+        }
+
+        .contact-head h2 em { font-style: normal; color: var(--gold); }
+        .contact-head>p:last-child { color: var(--ink-dim); }
+        .contact { text-align: center; }
+        .contact-btn, .contact-btn-1 { margin: 0.4rem 0.6rem; }
+
+        .form-section {
+            margin-top: 3.5rem;
+            text-align: left;
+            padding: clamp(1.8rem, 4vw, 3rem);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border);
+            background: var(--surface);
+            backdrop-filter: blur(16px);
+        }
+
+        .form-section h3 {
+            font-size: 1.6rem;
+            margin-bottom: 0.7rem;
+        }
+
+        .form-note {
+            color: var(--ink-dim);
+            font-size: 0.9rem;
+            margin-bottom: 2.2rem;
+            padding-bottom: 1.6rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .form-section form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.4rem 1.2rem;
+        }
+
+        .form-section form>div {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-section form>div:nth-child(4),
+        .form-section form>div:nth-child(5),
+        .form-section form>fieldset,
+        .form-section form>div:has(textarea),
+        .form-section form>div:has(select),
+        .form-section form>button {
+            grid-column: 1 / -1;
+        }
+
+        .form-section label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--ink-dim);
+            letter-spacing: 0.02em;
+        }
+
+        .form-section input[type="text"],
+        .form-section input[type="email"],
+        .form-section input[type="tel"],
+        .form-section textarea,
+        .form-section select {
+            width: 100%;
+            padding: 0.85rem 1.1rem;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-strong);
+            background: rgba(0, 0, 0, 0.25);
+            color: var(--ink);
+            font-family: var(--font-body);
+            font-size: 0.95rem;
+            transition: border-color var(--t-fast) var(--ease), background var(--t-fast) var(--ease);
+        }
+
+        .form-section input::placeholder,
+        .form-section textarea::placeholder { color: var(--ink-faint); }
+
+        .form-section input:focus,
+        .form-section textarea:focus,
+        .form-section select:focus {
+            border-color: var(--gold);
+            background: rgba(0, 0, 0, 0.35);
+            outline: none;
+        }
+
+        .form-section textarea {
+            min-height: 130px;
+            resize: vertical;
+        }
+
+        .form-section select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='8' viewBox='0 0 14 8'%3E%3Cpath d='M1 1l6 6 6-6' stroke='%23d9a868' stroke-width='2' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1.1rem center;
+            padding-right: 2.5rem;
+        }
+
+        .form-section select option {
+            background: var(--bg-soft);
+            color: var(--ink);
+        }
+
+        .form-section input[type="file"] {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border-radius: var(--radius-sm);
+            border: 1px dashed var(--border-strong);
+            background: rgba(0, 0, 0, 0.18);
+            color: var(--ink-dim);
+            font-size: 0.85rem;
+        }
+
+        .form-section input[type="file"]::file-selector-button {
+            margin-right: 1rem;
+            padding: 0.5rem 1rem;
+            border-radius: 999px;
+            border: none;
+            background: var(--surface-strong);
+            color: var(--ink);
+            font-weight: 600;
+            font-size: 0.82rem;
+            transition: background var(--t-fast) var(--ease);
+        }
+
+        .form-section input[type="file"]::file-selector-button:hover {
+            background: var(--gold-soft);
+            color: var(--gold);
+        }
+
+        .form-section fieldset {
+            border: none;
+            position: relative;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.7rem;
+        }
+
+        .form-section legend {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--ink-dim);
+            letter-spacing: 0.02em;
+            padding: 0;
+            grid-column: 1 / -1;
+            margin-bottom: 0.2rem;
+        }
+
+        .form-section fieldset .radio-option {
+            position: relative;
+        }
+
+        .form-section fieldset input[type="radio"] {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            cursor: pointer;
+        }
+
+        .form-section fieldset label {
+            display: block;
+            text-align: center;
+            padding: 0.85rem 0.9rem;
+            border-radius: 999px;
+            border: 1px solid var(--border-strong);
+            background: rgba(0, 0, 0, 0.2);
+            color: var(--ink-dim);
+            font-size: 0.88rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--t-fast) var(--ease);
+        }
+
+        .form-section fieldset label:hover {
+            border-color: var(--gold);
+            color: var(--ink);
+        }
+
+        .form-section fieldset input[type="radio"]:checked+label {
+            background: var(--grad-signature);
+            color: #1a1216;
+            border-color: transparent;
+        }
+
+        .form-section fieldset input[type="radio"]:focus-visible+label {
+            outline: 2px solid var(--gold);
+            outline-offset: 2px;
+        }
+
+        .form-section button[type="submit"] {
+            margin-top: 0.6rem;
+            padding: 1rem 2.4rem;
+            border-radius: 999px;
+            background: var(--grad-signature);
+            color: #1a1216;
+            font-weight: 700;
+            font-size: 1rem;
+            justify-self: start;
+            box-shadow: 0 10px 32px -10px rgba(217, 168, 104, 0.55);
+            transition: transform var(--t-fast) var(--ease), box-shadow var(--t-fast) var(--ease);
+        }
+
+        .form-section button[type="submit"]:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 16px 40px -10px rgba(217, 168, 104, 0.7);
+        }
+
+        .form-section button[type="submit"]:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .file-hint { font-size:0.76rem; color:var(--ink-faint); margin-top:0.25rem; }
+
+        #form-success-view {
+            text-align: center;
+            padding: 2.5rem 0 1rem;
+        }
+
+        #form-success-view h3 {
+            margin-bottom: 0.6rem;
+        }
+
+        #form-success-view p {
+            color: var(--ink-dim);
+        }
+
+        .form-error-msg {
+            color: var(--rose);
+            font-size: 0.88rem;
+            margin-top: -0.4rem;
+            display: none;
+        }
+
+        .form-error-msg.is-visible { display: block; }
+
+        /* ============================================
+           FOOTER
+        ============================================ */
+        footer {
+            border-top: 1px solid var(--border);
+            padding: 2.8rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            max-width: var(--container);
+            margin: 0 auto;
+        }
+
+        footer h4 {
+            font-family: var(--font-display);
+            font-size: 1.15rem;
+            margin-bottom: 0.3rem;
+        }
+
+        footer p {
+            color: var(--ink-faint);
+            font-size: 0.85rem;
+        }
+
+        /* ============================================
+           RESPONSIVE — TABLET (≤1024px)
+        ============================================ */
+        @media (max-width: 1024px) {
+            .hero {
+                grid-template-columns: 1fr;
+                gap: 4rem;
+            }
+
+            .hero-cards1 {
+                height: clamp(320px, 70vw, 460px);
+                margin: 0 auto;
+                max-width: 480px;
+                width: 100%;
+            }
+
+            .cards { grid-template-columns: repeat(2, 1fr); }
+
+            .skills { grid-template-columns: repeat(2, 1fr); }
+
+            /* Pricing cards — stack to single column on tablet */
+            .fg { grid-template-columns: 1fr; max-width: 500px; margin: 0 auto; }
+
+            /* Process: single column, hide connector arrows */
+            .process { grid-template-columns: 1fr; }
+            .process-card::before { display: none; }
+        }
+
+        /* ============================================
+           RESPONSIVE — MOBILE (≤768px)
+        ============================================ */
+        @media (max-width: 768px) {
+            .nav-links {
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                flex-direction: column;
+                gap: 0;
+                background: rgba(10, 8, 14, 0.97);
+                backdrop-filter: blur(24px) saturate(180%);
+                border-bottom: 1px solid rgba(217, 168, 104, 0.18);
+                box-shadow: 0 16px 40px -8px rgba(0, 0, 0, 0.7);
+                max-height: 0;
+                overflow: hidden;
+                opacity: 0;
+                transform: translateY(-6px);
+                transition:
+                    max-height 0.42s var(--ease),
+                    opacity 0.32s var(--ease),
+                    transform 0.32s var(--ease);
+            }
+
+            .nav-links.is-open {
+                max-height: 320px;
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            .nav-links a {
+                padding: 1rem 1.6rem;
+                border-top: 1px solid var(--border);
+                width: 100%;
+                border-radius: 0;
+                opacity: 0;
+                transform: translateX(-10px);
+                transition:
+                    opacity 0.28s var(--ease),
+                    transform 0.28s var(--ease),
+                    color 0.2s var(--ease),
+                    background 0.2s var(--ease);
+            }
+
+            .nav-links a::after {
+                width: 2px;
+                height: 0;
+                left: 0;
+                bottom: 0;
+                transform: none;
+                top: auto;
+                transition: height 0.25s var(--ease);
+            }
+
+            .nav-links a:hover::after { height: 100%; transform: none; }
+
+            .nav-links.is-open a { opacity: 1; transform: translateX(0); }
+            .nav-links.is-open a:nth-child(1) { transition-delay: 0.07s; }
+            .nav-links.is-open a:nth-child(2) { transition-delay: 0.13s; }
+            .nav-links.is-open a:nth-child(3) { transition-delay: 0.19s; }
+            .nav-links.is-open a:nth-child(4) { transition-delay: 0.25s; }
+            .nav-links:not(.is-open) a { transition-delay: 0s; }
+
+            .hamburger { display: flex; }
+
+            .hero-main .btn-primary,
+            .hero-main .btn-text { display: flex; width: fit-content; }
+
+            .hero-main-cards { gap: 0.5rem; }
+
+            .hero-cards1 {
+                display: flex;
+                flex-direction: column;
+                align-items: stretch;
+                height: auto;
+                overflow: visible;
+                gap: 1rem;
+                padding: 0.5rem 0;
+                max-width: 400px;
+                margin: 0 auto;
+            }
+
+            .hero-cards, 
+            .hero-cards.section-1,
+            .hero-cards.section-2,
+            .hero-cards.section-3 {
+                position: relative;
+                width: 100%;
+                top: auto;
+                right: auto;
+                left: auto;
+                bottom: auto;
+            }
+            .contact-btn, .contact-btn-1 { display: inline-flex; }
+
+            .form-section form { grid-template-columns: 1fr; }
+            .form-section form>div:nth-child(n) { grid-column: 1 / -1; }
+            .form-section fieldset { grid-template-columns: repeat(2, 1fr); }
+
+            /* Pricing cards — full width on mobile */
+            .fg { max-width: 440px; gap: 0.75rem; }
+            .fc { padding: 2rem 1.5rem 1.5rem; }
+        }
+
+        /* ============================================
+           RESPONSIVE — SMALL MOBILE (≤480px)
+        ============================================ */
+        @media (max-width: 480px) {
+            section { padding: clamp(3rem, 12vw, 4.5rem) 1.25rem; }
+            .navbar { padding: 1rem 1.25rem; }
+            .cards { grid-template-columns: 1fr; }
+
+            .skills { grid-template-columns: 1fr; }
+
+            .form-section { padding: 1.4rem; }
+            .form-section fieldset { grid-template-columns: 1fr; }
+
+            .hero-cards1 { gap: 0.75rem; }
+            .hero-cards  { padding: 1.2rem 1rem; }
+
+            /* Pricing cards — full width, compact on small mobile */
+            .fg { max-width: 100%; }
+            .fc { padding: 1.6rem 1.25rem 1.25rem; }
+
+            footer {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+        }
+
+        /* ============================================
+           Hero card animations override for mobile.
+        ============================================ */
+        @media (max-width: 768px) {
+            .hero-cards.section-1,
+            .hero-cards.section-2,
+            .hero-cards.section-3 {
+                animation: none;
+            }
+        }
+
+        @media (max-width: 768px) and (prefers-reduced-motion: no-preference) {
+            .hero-cards.section-1 {
+                animation: hero-in 0.8s var(--ease) 0.7s both, float-mobile 10s ease-in-out 1.55s infinite;
+            }
+            .hero-cards.section-2 {
+                animation: hero-in 0.8s var(--ease) 1.0s both, float-mobile 12s ease-in-out 1.85s infinite;
+            }
+            .hero-cards.section-3 {
+                animation: hero-in 0.8s var(--ease) 1.3s both, float-mobile 11s ease-in-out 2.15s infinite;
+            }
+        }
+
+        /* ============================================
+           ORDER MODAL OVERLAY
+        ============================================ */
+        #order-modal {
+            position: fixed;
+            inset: 0;
+            z-index: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.35s var(--ease);
+        }
+
+        #order-modal.is-open { opacity: 1; pointer-events: all; }
+
+        #order-modal-backdrop {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.72);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+        }
+
+        #order-modal-box {
+            position: relative;
+            width: min(780px, 94vw);
+            max-height: 90vh;
+            overflow-y: auto;
+            overflow-x: hidden;
+            border-radius: var(--radius-lg);
+            background: var(--bg-soft);
+            border: 1px solid var(--border-strong);
+            box-shadow:
+                0 40px 100px -20px rgba(0, 0, 0, 0.75),
+                0 0 0 1px rgba(217, 168, 104, 0.10) inset;
+            transform: scale(0.94) translateY(18px);
+            transition: transform 0.42s var(--ease);
+            scrollbar-width: thin;
+            scrollbar-color: var(--border-strong) transparent;
+        }
+
+        #order-modal-box::-webkit-scrollbar { width: 5px; }
+        #order-modal-box::-webkit-scrollbar-track { background: transparent; }
+        #order-modal-box::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 99px; }
+
+        #order-modal.is-open #order-modal-box { transform: scale(1) translateY(0); }
+
+        #order-modal-close {
+            position: absolute;
+            top: 1.1rem;
+            right: 1.1rem;
+            z-index: 10;
+            width: 34px;
+            height: 34px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            border: 1px solid var(--border-strong);
+            background: var(--surface-strong);
+            color: var(--ink-dim);
+            font-size: 0.9rem;
+            line-height: 1;
+            cursor: pointer;
+            font-family: inherit;
+            transition:
+                color var(--t-fast) var(--ease),
+                background var(--t-fast) var(--ease),
+                border-color var(--t-fast) var(--ease),
+                transform var(--t-fast) var(--ease);
+        }
+
+        #order-modal-close:hover {
+            color: var(--ink);
+            background: rgba(217, 168, 104, 0.15);
+            border-color: rgba(217, 168, 104, 0.4);
+            transform: rotate(90deg);
+        }
+
+        #order-modal .form-section {
+            margin-top: 0;
+            border: none;
+            border-radius: 0;
+            background: transparent;
+            backdrop-filter: none;
+        }
+
+        @media (max-width: 600px) {
+            #order-modal { padding: 0; align-items: flex-end; }
+
+            #order-modal-box {
+                width: 100%;
+                max-height: 95vh;
+                border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+                transform: scale(1) translateY(100%);
+            }
+
+            #order-modal.is-open #order-modal-box { transform: scale(1) translateY(0); }
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar">
+        <span class="brand">Forever<span class="brand-span"> Miles</span></span>
+        <button class="hamburger" aria-label="Toggle navigation menu" aria-expanded="false">&#9776;</button>
+        <div class="nav-links">
+            <a href="#about">About</a>
+            <a href="#pricing">Pricing</a>
+            <a href="#skills">Skills</a>
+            <a href="#contact">Contact</a>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-main">
+            <p class="hero-p">&#10022; Personalized web pages for every special moment</p>
+            <h1>Create Digital <br>Moments Unforgettable</h1>
+            <p class="hero-p1">A place where we design custom web pages for birthdays, weddings, proposals &amp; more —
+                designed in 24 hours, shared in one link.</p>
+            <div class="hero-cta-row">
+                <a href="#order-form" class="btn-primary" id="orderNowBtn">Order Now</a>
+                <a href="#about" class="btn-text">See How It Works &#8595;</a>
+            </div>
+
+            <div class="hero-main-cards">
+                <div>
+                    <h2>24h</h2>
+                    <p>Average Delivery</p>
+                </div>
+                <div>
+                    <h2>6+</h2>
+                    <p>Occasions</p>
+                </div>
+                <div>
+                    <h2>24/7</h2>
+                    <p>Available</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="hero-cards1">
+            <div class="hero-cards section-1">
+                <p class="section-1-p" aria-hidden="true">&#128140;</p>
+                <h3 class="section-1-h3">Will You Marry Me?</h3>
+                <p class="section-1-p1">Message from Mr. Perfect</p>
+                <p class="section-p">Yes! &#128149;</p>
+            </div>
+            <div class="hero-cards section-2">
+                <p class="section-1-p" aria-hidden="true">&#127874;</p>
+                <h3 class="section-1-h3">Happy Birthday<br><span><em>Bestu! &#127881;</em></span></h3>
+                <p class="section-1-p1">From the most annoying person &#128540;</p>
+                <p>Click Here &#129395;</p>
+            </div>
+            <div class="hero-cards section-3">
+                <p class="section-1-p" aria-hidden="true">&#128141;</p>
+                <h3 class="section-1-h3">Wedding Invitation</h3>
+                <p class="section-1-p1">Ansh &amp; Prachi</p>
+                <p>RSVP &#8594;</p>
+            </div>
+        </div>
+    </section>
+
+    <main>
+        <section class="about" id="about">
+            <div class="about-info" data-reveal>
+                <p class="eyebrow">&#10022; Choose Your Celebration &#10022;</p>
+                <h2>Pick Your Moment. <br><span>We'll Make It Unforgettable.</span></h2>
+                <p>Six occasions. One studio. Pages they'll never forget.</p>
+            </div>
+            <div class="cards">
+                <div class="card" data-theme="birthday" data-reveal>
+                    <p class="card-tag">Most Popular</p>
+                    <p class="card-icon" aria-hidden="true">&#127874;</p>
+                    <h3>Birthday Surprises</h3>
+                    <p>Turn your love, memories, and emotions into a surprise page they'll never forget and cherish forever. &#10084;&#65039;&#10024;</p>
+                    <a href="birthday-suprise.html" target="_blank">View Sample &#8594;</a>
+                </div>
+                <div class="card" data-theme="wedding" data-reveal>
+                    <p class="card-icon" aria-hidden="true">&#128141;</p>
+                    <h3>Wedding Invitations</h3>
+                    <p>The days of sending paper invitations are over. Now you can send a personalized invitation webpage in a way they'll never forget &#10024;&#10084;&#65039;</p>
+                    <a href="wedding-invitation.html" target="_blank">View Sample &#8594;</a>
+                </div>
+                <div class="card" data-theme="proposal" data-reveal>
+                    <p class="card-tag">Romantic</p>
+                    <p class="card-icon" aria-hidden="true">&#128140;</p>
+                    <h3>Marriage Proposals</h3>
+                    <p>Turn your proposal into a beautiful page — filled with photos, memories &amp; your unique love story. &#10084;&#65039;&#10024;</p>
+                    <a href="proposal-suprise.html" target="_blank">View Sample &#8594;</a>
+                </div>
+                <div class="card" data-theme="anniversary" data-reveal>
+                    <p class="card-icon" aria-hidden="true">&#127882;</p>
+                    <h3>Anniversary Surprises</h3>
+                    <p>Relive the moments that matter most through heartfelt words that celebrate every memory you've shared together. &#10024;&#10084;&#65039;</p>
+                    <a href="anniversary-surprise.html" target="_blank">View Sample &#8594;</a>
+                </div>
+                <div class="card" data-theme="baby" data-reveal>
+                    <p class="card-icon" aria-hidden="true">&#128118;</p>
+                    <h3>Baby Shower</h3>
+                    <p>A joyful, shareable announcement page for your baby — with messages, photos and videos people will never forget. &#10024;&#10084;&#65039;</p>
+                    <a href="baby-shower.html" target="_blank">View Sample &#8594;</a>
+                </div>
+                <div class="card" data-theme="graduation" data-reveal>
+                    <p class="card-icon" aria-hidden="true">&#127891;</p>
+                    <h3>Graduation</h3>
+                    <p>Mark your milestone with a beautiful showcase page that highlights your hard work, growth, and achievements. &#127775;&#127942;</p>
+                    <a href="graduation.html" target="_blank">View Sample &#8594;</a>
+                </div>
+            </div>
+        </section>
+
+        <section class="process">
+            <p class="eyebrow">&#10022; How It Works &#10022;</p>
+            <h2 data-reveal>Make Moments Unforgettable</h2>
+            <p>In just three steps</p>
+            <div class="process-card" data-reveal>
+                <span class="step-num">01</span>
+                <h3>Tell Us the Story</h3>
+                <p>Click the button below and fill out a simple form, or contact us directly on WhatsApp.</p>
+            </div>
+            <div class="process-card" data-reveal>
+                <span class="step-num">02</span>
+                <h3>We Build It</h3>
+                <p>Your personalized page will be crafted and live within 24 hours of receiving your idea.</p>
+            </div>
+            <div class="process-card" data-reveal>
+                <span class="step-num">03</span>
+                <h3>Share &amp; Wow</h3>
+                <p>One link or QR code. Share it — WhatsApp, Instagram, anywhere.</p>
+            </div>
+            <p class="privacy-note">Note: Your privacy and safety come first. We keep your information secure and never misuse it.</p>
+        </section>
+
+        <section class="pricing" id="pricing">
+            <div class="pricing-head" data-reveal>
+                <p class="eyebrow">&#10022; Pricing &#10022;</p>
+                <h2>Simple, Honest Pricing</h2>
+                <p>No hidden charges. No surprises.</p>
+            </div>
+            <div class="fg">
+
+                <div class="fc" data-rgb="160,184,232" data-gold="0" onmouseenter="hA(this)" onmouseleave="uA(this)">
+              <div class="bar" style="background:#a0b8e8;opacity:.35"></div>
+              <span class="fstep" style="color:#a0b8e8">01</span>
+              <div class="fn">Template</div>
+           <div class="ft" style="color:#a0b8e8">Quick &amp; personal</div>
+           <div style="display:flex;align-items:baseline;gap:5px">
+          <span class="fstr">&#8377;1,099</span>
+          <span class="fprice">&#8377;899</span>
+          </div>
+          <div class="fdis">Save &#8377;200 today</div>
+          <div class="fsave">Limited-time launch pricing</div>
+             <div class="fdiv"></div>
+           <ul class="fl">
+          <li>✓ Pre-designed template</li>
+          <li>✓ Custom names &amp; message</li>
+          <li>✓ Up to 5 photos</li>
+          <li>✓ Mobile-friendly</li>
+          <li>✓ Shareable link</li>
+          </ul>
+         <button class="fbtn fbtn-blue" data-plan="template">Choose template →</button>
+         </div>
+
+         <div class="fc" data-rgb="232,160,160" data-gold="0" onmouseenter="hA(this)" onmouseleave="uA(this)">
+         <div class="bar" style="background:#e8a0a0;opacity:.35"></div>
+         <span class="fpill" style="background:rgba(232,160,160,.12);color:#e8a0a0;border:1px solid rgba(232,160,160,.28)">Popular</span>
+         <span class="fstep" style="color:#e8a0a0">02</span>
+         <div class="fn">Template+</div>
+         <div class="ft" style="color:#e8a0a0">Flexible &amp; fun</div>
+         <div style="display:flex;align-items:baseline;gap:5px">
+          <span class="fstr">&#8377;2,199</span>
+          <span class="fprice">&#8377;1,699</span>
+         </div>
+         <div class="fdis">Save &#8377;500 today</div>
+         <div class="fsave">Most picked when comparing all three</div>
+         <div class="fdiv"></div>
+         <ul class="fl">
+           <li>✓ Customizable template</li>
+          <li>✓ Up to 7 photos + 2 videos</li>
+          <li>✓ Custom domain</li>
+          <li>✓ Custom letter</li>
+          <li>✓ Shareable link</li>
+         </ul>
+         <button class="fbtn fbtn-rose" data-plan="template-custom">Get flexible →</button>
+         <div class="fsocial">⚡ Only &#8377;300 more than Template for 2x the photos</div>
+         </div>
+
+         <div class="fc" data-rgb="217,168,104" data-gold="1" style="background:rgba(217,168,104,.04);border-color:rgba(217,168,104,.28)" onmouseenter="hA(this)" onmouseleave="uA(this)">
+         <div class="bar" style="background:linear-gradient(90deg,#d9a868,#e8a0a0);opacity:.9"></div>
+         <span class="fpill" style="background:linear-gradient(135deg,#d9a868,#e8a0a0);color:#1a1216">Best value</span>
+          <span class="fstep" style="color:#d9a868">03</span>
+         <div class="fn">Full custom</div>
+         <div class="ft" style="color:#d9a868">Premium &amp; personal</div>
+         <div style="display:flex;align-items:baseline;gap:5px">
+          <span class="fstr">&#8377;3,998</span>
+          <span class="fprice">&#8377;1,999</span>
+         </div>
+         <div class="fdis">Save &#8377;1,999 today — 50% off</div>
+         <div class="fsave" data-dynamic="perday">Less than &#8377;6/day for a full year</div>
+         <div class="fdiv" style="background:rgba(217,168,104,.18)"></div>
+         <ul class="fl">
+          <li>✓ Fully custom design</li>
+          <li>✓ Animations &amp; transitions</li>
+          <li>✓ Unlimited photos + video</li>
+          <li>✓ RSVP form + countdown</li>
+          <li>✓ QR code for sharing</li>
+          <li>✓ Custom domain</li>
+          <li>✓ 1-year validity</li>
+          </ul>
+         <button class="fbtn fbtn-gold" data-plan="custom" style="background:linear-gradient(135deg,#d9a868,#e8a0a0);border:none;color:#1a1216">Go all in →</button>
+          </div>
+
+         </div>
+        </section>
+
+        <section class="skills" id="skills">
+            <div class="skills-head" data-reveal>
+                <p class="eyebrow">&#10022; Why Us &#10022;</p>
+                <h2>Modern Way of <span>Making Them Smile</span></h2>
+            </div>
+            <div class="skills-card" data-reveal>
+                <p aria-hidden="true">&#9889;</p>
+                <h3>24-Hour Delivery</h3>
+                <p>Your page is live by the next morning.</p>
+            </div>
+            <div class="skills-card" data-reveal>
+                <p aria-hidden="true">&#128274;</p>
+                <h3>Privacy &amp; Safety</h3>
+                <p>Our policy is safety and privacy first.</p>
+            </div>
+            <div class="skills-card" data-reveal>
+                <p aria-hidden="true">&#127912;</p>
+                <h3>Fully Personal</h3>
+                <p>Every detail built around the person you love.</p>
+            </div>
+            <div class="skills-card" data-reveal>
+                <p aria-hidden="true">&#128279;</p>
+                <h3>Instant Sharing</h3>
+                <p>One link or QR code. Share it anywhere.</p>
+            </div>
+        </section>
+
+        <section class="contact" id="contact">
+            <div class="contact-head" data-reveal>
+                <p class="eyebrow">&#10022; Start Your Order Today</p>
+                <h2>Ready to Create <span><em>Something Magical?</em></span></h2>
+                <p>Order in minutes. Your page is live in 24 hours.<br>Make them feel truly special.</p>
+            </div>
+            <a href="https://wa.me/916266213617" class="btn-outline contact-btn" target="_blank" rel="noopener">Contact Us on WhatsApp</a>
+            <a href="#order-form" class="btn-primary contact-btn-1">Order Now</a>
+        </section>
+    </main>
+
+    <!-- ORDER MODAL -->
+    <div id="order-modal" role="dialog" aria-modal="true"
+         aria-labelledby="form-modal-title" aria-hidden="true">
+        <div id="order-modal-backdrop"></div>
+        <div id="order-modal-box">
+            <button id="order-modal-close" aria-label="Close order form">&#10005;</button>
+            <div class="form-section" id="order-form">
+                <div id="form-default-view">
+                    <h3 id="form-modal-title">Order Information</h3>
+                    <p class="form-note">All fields marked * are required. We'll review your submission and contact you within one hour.</p>
+
+                    <form id="orderForm" method="POST">
+                        <input type="hidden" name="access_key" value="0b7d6002-ce8f-43e2-a1aa-7aedee9de7df">
+
+                        <div>
+                            <label for="name">Your Name</label>
+                            <input type="text" id="name" name="name" placeholder="E.g. Rohan Mehta" required>
+                        </div>
+
+                        <div>
+                            <label for="email">Email Address</label>
+                            <input type="email" id="email" name="email" placeholder="your@email.com" required>
+                        </div>
+
+                        <div>
+                            <label for="contact">Contact Number</label>
+                            <input type="tel" id="contact" name="contact" placeholder="+91 98765 43210"
+                                minlength="10" maxlength="13" required>
+                        </div>
+
+                        <div>
+                            <label for="photos">Upload Images</label>
+                            <input type="file" id="photos" name="photos" accept="image/*" multiple>
+                            <p class="file-hint">Custom plan members are requested to send resources on WhatsApp</p>
+                        </div>
+
+                        <div>
+                            <label for="videos">Upload Videos</label>
+                            <input type="file" id="videos" name="videos" accept="video/*" multiple>
+                            <p class="file-hint">Custom plan members are requested to send resources on WhatsApp</p>
+                        </div>
+
+                        <fieldset>
+                            <legend>Choose Your Occasion</legend>
+                            <div class="radio-option">
+                                <input type="radio" name="occasion" id="birthday" value="Birthday Surprise" checked required>
+                                <label for="birthday">&#127874; Birthday Surprise</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" name="occasion" id="wedding" value="Wedding Invitation">
+                                <label for="wedding">&#128141; Wedding Invitation</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" name="occasion" id="proposal" value="Marriage Proposal">
+                                <label for="proposal">&#128140; Marriage Proposal</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" name="occasion" id="anniversary" value="Anniversary Surprise">
+                                <label for="anniversary">&#127882; Anniversary Surprise</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" name="occasion" id="baby" value="Baby Shower">
+                                <label for="baby">&#128118; Baby Shower</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" name="occasion" id="graduation" value="Graduation">
+                                <label for="graduation">&#127891; Graduation</label>
+                            </div>
+                        </fieldset>
+
+                        <div>
+                            <label for="msg">Your Idea &amp; Personal Message</label>
+                            <textarea name="msg" id="msg"
+                                placeholder="Tell us what you have in mind — the recipient's name, your relationship, favourite memories, songs you love, the mood you want to set, anything that matters to you…"
+                                required></textarea>
+                        </div>
+
+                        <div>
+                            <label for="plan">Select Your Plan</label>
+                            <select name="plan" id="plan">
+                                <option value="template">&#8377;899 — Template</option>
+                                <option value="template-custom">&#8377;1,699 — Template + Custom</option>
+                                <option value="custom">&#8377;1,999 — Custom</option>
+                            </select>
+                        </div>
+
+                        <p class="form-error-msg" id="form-error-msg">Something went wrong. Please try again or message us on WhatsApp.</p>
+
+                        <button type="submit">Submit</button>
+                    </form>
+                </div>
+                <div id="form-success-view" style="display:none;">
+                    <h3>You're all set! &#127881;</h3>
+                    <p>We've received your order and will reach out within one hour. Thank you for trusting us with this moment.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div>
+            <h4>Forever Miles</h4>
+            <p>We create websites to create memories &#10084;&#65039;</p>
+        </div>
+        <div>
+            <p>&#169; 2026 Forever Miles. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        (function () {
+            'use strict';
+
+            var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+            /* ---------- Hamburger menu ---------- */
+            var hamburger = document.querySelector('.hamburger');
+            var navLinks  = document.querySelector('.nav-links');
+            var navbar    = document.querySelector('.navbar');
+
+            function closeMenu() {
+                if (!navLinks || !hamburger) return;
+                navLinks.classList.remove('is-open');
+                hamburger.classList.remove('is-open');
+                hamburger.setAttribute('aria-expanded', 'false');
+                hamburger.innerHTML = '&#9776;';
+            }
+
+            if (hamburger && navLinks) {
+                hamburger.addEventListener('click', function () {
+                    var isOpen = navLinks.classList.toggle('is-open');
+                    hamburger.classList.toggle('is-open', isOpen);
+                    hamburger.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+                    if (isOpen) {
+                        setTimeout(function () { hamburger.innerHTML = '&#10005;'; }, reduceMotion ? 0 : 130);
+                    } else {
+                        hamburger.innerHTML = '&#9776;';
+                    }
+                });
+
+                navLinks.querySelectorAll('a').forEach(function (link) {
+                    link.addEventListener('click', closeMenu);
+                });
+            }
+
+            /* ---------- Navbar scroll state ---------- */
+            var heroEl = document.querySelector('.hero');
+            function updateNavScroll() {
+                if (!navbar) return;
+                var threshold = heroEl ? heroEl.offsetHeight * 0.25 : 80;
+                navbar.classList.toggle('scrolled', window.scrollY > threshold);
+            }
+            window.addEventListener('scroll', updateNavScroll, { passive: true });
+            updateNavScroll();
+
+            /* ---------- Smooth scroll helper ---------- */
+            function scrollToEl(el, offset) {
+                if (!el) return;
+                var top = el.getBoundingClientRect().top + window.pageYOffset - (offset || 0);
+                window.scrollTo({ top: top, behavior: reduceMotion ? 'auto' : 'smooth' });
+            }
+
+            var navHeight = navbar ? navbar.offsetHeight : 0;
+
+            /* ============================================================
+               ORDER MODAL
+            ============================================================ */
+            var modal        = document.getElementById('order-modal');
+            var modalBox      = document.getElementById('order-modal-box');
+            var modalClose    = document.getElementById('order-modal-close');
+            var defaultView   = document.getElementById('form-default-view');
+            var successView   = document.getElementById('form-success-view');
+            var lastFocused   = null;
+
+            function getFocusable() {
+                if (!modalBox) return [];
+                return Array.from(modalBox.querySelectorAll(
+                    'a[href], button, input, select, textarea, [tabindex]:not([tabindex="-1"])'
+                ));
+            }
+
+            function resetModalView() {
+                if (defaultView) defaultView.style.display = '';
+                if (successView) successView.style.display = 'none';
+                var errorMsg = document.getElementById('form-error-msg');
+                if (errorMsg) errorMsg.classList.remove('is-visible');
+            }
+
+            function openModal(planValue) {
+                if (!modal) return;
+                lastFocused = document.activeElement;
+                modal.setAttribute('aria-hidden', 'false');
+                modal.classList.add('is-open');
+                document.body.style.overflow = 'hidden';
+                if (planValue) {
+                    var sel = document.getElementById('plan');
+                    if (sel) sel.value = planValue;
+                }
+                setTimeout(function () {
+                    var first = getFocusable()[0];
+                    if (first) first.focus({ preventScroll: true });
+                }, reduceMotion ? 0 : 420);
+            }
+
+            function closeModal() {
+                if (!modal) return;
+                modal.classList.remove('is-open');
+                modal.setAttribute('aria-hidden', 'true');
+                document.body.style.overflow = '';
+                if (lastFocused) lastFocused.focus({ preventScroll: true });
+                resetModalView();
+            }
+
+            if (modalClose) modalClose.addEventListener('click', closeModal);
+            var modalBackdrop = document.getElementById('order-modal-backdrop');
+            if (modalBackdrop) modalBackdrop.addEventListener('click', closeModal);
+
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape' && modal && modal.classList.contains('is-open')) closeModal();
+            });
+
+            if (modal) {
+                modal.addEventListener('keydown', function (e) {
+                    if (e.key !== 'Tab') return;
+                    var focusable = getFocusable();
+                    if (!focusable.length) return;
+                    var first = focusable[0];
+                    var last  = focusable[focusable.length - 1];
+                    if (e.shiftKey) {
+                        if (document.activeElement === first) { e.preventDefault(); last.focus(); }
+                    } else {
+                        if (document.activeElement === last)  { e.preventDefault(); first.focus(); }
+                    }
+                });
+            }
+
+            var orderNowBtn = document.getElementById('orderNowBtn');
+            if (orderNowBtn) {
+                orderNowBtn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    openModal('custom');
+                });
+            }
+
+            /* Pricing card buttons — wire up data-plan to openModal */
+            document.querySelectorAll('[data-plan]').forEach(function (el) {
+                el.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    openModal(el.getAttribute('data-plan'));
+                });
+            });
+
+            document.querySelectorAll('a[href="#order-form"]').forEach(function (link) {
+                if (link.hasAttribute('data-plan') || link.id === 'orderNowBtn') return;
+                link.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    openModal(null);
+                });
+            });
+
+            document.querySelectorAll('a[href^="#"]').forEach(function (link) {
+                if (link.hasAttribute('data-plan') || link.id === 'orderNowBtn') return;
+                if (link.getAttribute('href') === '#order-form') return;
+                link.addEventListener('click', function (e) {
+                    var targetId = link.getAttribute('href');
+                    if (targetId.length < 2) return;
+                    var target = document.querySelector(targetId);
+                    if (!target) return;
+                    e.preventDefault();
+                    scrollToEl(target, navHeight);
+                });
+            });
+
+            /* ---------- Order form submission (Web3Forms) ---------- */
+            var orderForm = document.getElementById('orderForm');
+            if (orderForm) {
+                orderForm.addEventListener('submit', function (e) {
+                    e.preventDefault();
+
+                    var submitBtn = orderForm.querySelector('button[type="submit"]');
+                    var errorMsg  = document.getElementById('form-error-msg');
+                    if (errorMsg) errorMsg.classList.remove('is-visible');
+                    if (submitBtn) {
+                        submitBtn.disabled = true;
+                        submitBtn.textContent = 'Sending...';
+                    }
+
+                    var formData = new FormData(orderForm);
+
+                    fetch('https://api.web3forms.com/submit', {
+                        method: 'POST',
+                        headers: { Accept: 'application/json' },
+                        body: formData
+                    })
+                        .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+                        .then(function (result) {
+                            if (result.ok && result.data && result.data.success) {
+                                if (defaultView) defaultView.style.display = 'none';
+                                if (successView) successView.style.display = '';
+                                orderForm.reset();
+                                var birthdayRadio = document.getElementById('birthday');
+                                if (birthdayRadio) birthdayRadio.checked = true;
+                            } else {
+                                throw new Error('Submission was not successful');
+                            }
+                        })
+                        .catch(function () {
+                            if (errorMsg) errorMsg.classList.add('is-visible');
+                        })
+                        .finally(function () {
+                            if (submitBtn) {
+                                submitBtn.disabled = false;
+                                submitBtn.textContent = 'Submit';
+                            }
+                        });
+                });
+            }
+
+            /* ---------- Touch-friendly theme cards ---------- */
+            var isTouch = window.matchMedia('(hover: none)').matches
+                || ('ontouchstart' in window)
+                || (navigator.maxTouchPoints > 0);
+
+            if (isTouch) {
+                document.querySelectorAll('.card').forEach(function (card) {
+                    card.addEventListener('click', function () {
+                        document.querySelectorAll('.card.theme-active').forEach(function (c) {
+                            if (c !== card) c.classList.remove('theme-active');
+                        });
+                        card.classList.toggle('theme-active');
+                    });
+                });
+            }
+
+            /* ---------- Hero floating-card parallax (pointer devices only) ---------- */
+            var heroCardsWrap = document.querySelector('.hero-cards1');
+            if (heroCardsWrap && !isTouch && !reduceMotion) {
+                var cards = heroCardsWrap.querySelectorAll('.hero-cards');
+                heroCardsWrap.addEventListener('mousemove', function (e) {
+                    var rect = heroCardsWrap.getBoundingClientRect();
+                    var x = (e.clientX - rect.left) / rect.width  - 0.5;
+                    var y = (e.clientY - rect.top)  / rect.height - 0.5;
+                    cards.forEach(function (card, i) {
+                        var depth = (i + 1) * 6;
+                        card.style.setProperty('--px', (x * depth).toFixed(2) + 'px');
+                        card.style.setProperty('--py', (y * depth).toFixed(2) + 'px');
+                        card.style.transform = 'translate3d(calc(var(--px,0px)), calc(var(--py,0px)), 0)';
+                    });
+                });
+                heroCardsWrap.addEventListener('mouseleave', function () {
+                    cards.forEach(function (card) { card.style.transform = ''; });
+                });
+            }
+
+            /* ---------- Scroll-reveal with stagger ---------- */
+            var revealEls = document.querySelectorAll('[data-reveal]');
+
+            var maxDelayMs = 0;
+
+            document.querySelectorAll('.cards .card').forEach(function (card, i) {
+                var d = i * 60;
+                card.style.transitionDelay = d + 'ms';
+                if (d > maxDelayMs) maxDelayMs = d;
+            });
+
+            document.querySelectorAll('.process-card').forEach(function (card, i) {
+                var d = i * 140;
+                card.style.transitionDelay = d + 'ms';
+                if (d > maxDelayMs) maxDelayMs = d;
+            });
+
+            document.querySelectorAll('.skills-card').forEach(function (card, i) {
+                var d = i * 90;
+                card.style.transitionDelay = d + 'ms';
+                if (d > maxDelayMs) maxDelayMs = d;
+            });
+
+            var revealBufferMs = maxDelayMs + 900 + 100;
+
+            if ('IntersectionObserver' in window && !reduceMotion) {
+                var observer = new IntersectionObserver(function (entries) {
+                    entries.forEach(function (entry) {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('is-visible');
+                            setTimeout(function () {
+                                entry.target.style.transitionDelay = '0ms';
+                            }, revealBufferMs);
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+
+                revealEls.forEach(function (el) { observer.observe(el); });
+
+            } else {
+                revealEls.forEach(function (el) { el.classList.add('is-visible'); });
+            }
+
+            /* ---------- Dynamic per-day price (Full Custom plan) ---------- */
+            var perDayEl = document.querySelector('[data-dynamic="perday"]');
+            if (perDayEl) {
+                var fullCustomPrice = 1999;
+                var perDay = Math.ceil(fullCustomPrice / 365);
+                perDayEl.textContent = 'Less than \u20B9' + perDay + '/day for a full year';
+            }
+
+        })();
+
+        function hA(card){
+          var siblings = card.parentElement.querySelectorAll('.fc');
+          siblings.forEach(function(s){
+            if(s !== card){
+              var sIsGold = s.getAttribute('data-gold') === '1';
+              s.style.opacity = '0.55';
+              s.style.transform = 'scale(0.98)';
+              s.style.boxShadow = 'none';
+              s.style.borderColor = sIsGold ? 'rgba(217,168,104,.28)' : 'var(--border)';
+              s.style.background = sIsGold ? 'rgba(217,168,104,.04)' : 'rgba(255,255,255,0.03)';
+            } else {
+              s.style.opacity = '1';
+              s.style.transform = 'translateY(-3px)';
+              var rgb = s.getAttribute('data-rgb');
+              var isGold = s.getAttribute('data-gold') === '1';
+              if(rgb){
+                s.style.boxShadow = '0 14px 30px -10px rgba(' + rgb + ',0.4)';
+                s.style.borderColor = 'rgba(' + rgb + ',0.55)';
+                s.style.background = isGold
+                  ? 'linear-gradient(160deg, rgba(' + rgb + ',0.13), rgba(20,16,12,0.6))'
+                  : 'rgba(' + rgb + ',0.09)';
+              }
+            }
+          });
+        }
+
+        function uA(card){
+          var siblings = card.parentElement.querySelectorAll('.fc');
+          siblings.forEach(function(s){
+            s.style.opacity = '1';
+            s.style.transform = 'none';
+            s.style.boxShadow = 'none';
+            var isGold = s.getAttribute('data-gold') === '1';
+            s.style.borderColor = isGold ? 'rgba(217,168,104,.28)' : 'var(--border)';
+            s.style.background = isGold ? 'rgba(217,168,104,.04)' : 'rgba(255,255,255,0.03)';
+          });
+        }
+    </script>
+</body>
+
+</html>
