@@ -686,20 +686,20 @@ section{
    GALLERY
    ============================================ */
 .polaroid-grid{
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: flex-start;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  justify-items: center;
+  align-items: start;
   gap: 32px;
   padding: 40px 0 60px;
   position: relative;
-  max-width: 800px;
-  margin: 0 auto;
+  max-width: 100%;
+  margin: 0 ;
 }
 
 .polaroid{
   display: block;
-  width: 220px;
+  width: min(260px, 100%);
   background: #fff5f8;
   padding: 12px 12px 48px;
   border-radius: 3px;
@@ -1381,6 +1381,118 @@ footer{
   font-size: 36px;
   color: var(--text-cloud);
   line-height: 1;
+}
+
+/* ============================================
+   RESPONSIVE FIXES FOR SMALLER DEVICES
+   ============================================ */
+@media (max-width: 900px){
+  section{ padding: 90px 18px; }
+  #hero{ padding-top: 56px; }
+  .section-title{ margin-bottom: 48px; }
+  
+}
+
+@media (max-width: 700px){
+  section{ padding: 76px 16px; }
+  #hero{ min-height: auto; padding: 92px 16px 72px; }
+  .hero-sub{ max-width: 100%; }
+  .scroll-cue{ margin-top: 42px; }
+  
+ 
+  .polaroid-grid{ gap: 20px; padding: 28px 0 44px; }
+  .polaroid{ width: min(240px, calc(50% - 12px)); }
+   .polaroid, .polaroid.in-view {
+    transform: none;
+    animation: none;
+  }
+  .polaroid:hover, .polaroid:focus-visible {
+    transform: none;
+    box-shadow: 0 22px 48px rgba(192,67,110,0.32);
+  }
+  .letter-paper{ padding: 42px 22px 34px; }
+  .gift-stage{ min-height: auto; padding-bottom: 10px; }
+  .qr-frame{ width: min(360px, 100%); padding: 30px 20px 22px; }
+}
+
+@media (max-width: 480px){
+  .section-title{ margin-bottom: 40px; }
+  .tag{ font-size: 18px; }
+  #hero h1{
+    font-size: clamp(38px, 13vw, 56px);
+    line-height: 1.05;
+  }
+  .hero-sub{ font-size: 15px; line-height: 1.65; }
+  .polaroid-grid{ gap: 16px; padding: 24px 0 34px; }
+  .polaroid{ width: 100%; }
+  .letter-env-wrap{ width: 200px; height: 136px; }
+  .letter-paper{ padding: 34px 18px 30px; font-size: 15px; }
+  .letter-content p{ margin-bottom: 18px; }
+  .letter-salutation, .signature{ font-size: 24px; }
+  .gift-plane-btn{ width: 100px; height: 100px; }
+  .gift-plane{ font-size: 38px; }
+  .card-a-text{ font-size: 16px; }
+  .qr-frame{ padding: 28px 18px 20px; }
+  .qr-img{ width: 180px; height: 180px; }
+  .replay-btn{ margin-top: 14px; }
+  .lightbox{ padding: 16px; }
+  .lightbox-close{ top: 12px; right: 14px; font-size: 28px; }
+}
+
+@media (max-width: 360px){
+  .section-title{ font-size: 24px; }
+  .hero-sub{ font-size: 14px; }
+  .letter-env-wrap{ width: 180px; height: 122px; }
+  .letter-paper{ padding: 28px 14px 22px; }
+  .qr-img{ width: 160px; height: 160px; }
+}
+
+@media (orientation: landscape) and (max-height: 720px){
+  #loader, #hero{ min-height: auto; }
+  .loader-content{ padding: 20px; }
+  .scroll-cue{ margin-top: 28px; }
+}
+/* before — only this existed */
+@media (max-width: 640px){
+  .beat{ max-width: 100%; margin-left: 36px !important; margin-right: 0 !important; }
+}
+
+/* after — replaced with: */
+@media (max-width: 640px){
+  #story{ padding: 90px 20px 100px; }
+  #story .section-title{ margin-bottom: 50px; }
+  .beat{
+    max-width: 100%;
+    margin-left: 36px !important;
+    margin-right: 0 !important;
+    margin-bottom: 70px;
+    padding: 22px 22px;
+  }
+  .beat-mark{ top: -14px; left: -14px; width: 30px; height: 30px; font-size: 13px; }
+  .beat-label{ font-size: 20px; }
+  .beat-text{ font-size: 15px; line-height: 1.65; }
+}
+
+@media (max-width: 480px){
+  #story{ padding: 70px 16px 90px; }
+  #story .section-eyebrow{ font-size: 20px; }
+  #story .section-title{ font-size: clamp(24px, 6.5vw, 32px); margin-bottom: 40px; }
+  .beat{ margin-left: 28px !important; padding: 18px 18px; margin-bottom: 56px; }
+  .beat-mark{ top: -12px; left: -12px; width: 26px; height: 26px; font-size: 11px; }
+  .beat-label{ font-size: 18px; margin-bottom: 6px; }
+  .beat-text{ font-size: 14px; line-height: 1.6; }
+}
+
+@media (max-width: 360px){
+  #story{ padding: 60px 12px 80px; }
+  .beat{ margin-left: 22px !important; padding: 16px 14px; }
+  .beat-mark{ top: -11px; left: -11px; width: 24px; height: 24px; font-size: 10px; }
+  .beat-text{ font-size: 13.5px; }
+}
+
+@media (max-height: 480px) and (orientation: landscape){
+  #story{ padding: 50px 24px; }
+  .beat{ margin-bottom: 40px; }
 }
 
 </style>
